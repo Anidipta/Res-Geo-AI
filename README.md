@@ -1,6 +1,5 @@
 # Res-Geo-AI
 
-# Res Geo AI - Project Structure
 
 ```
 res_geo_ai/
