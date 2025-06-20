@@ -1,0 +1,13 @@
+streamlit
+streamlit-folium
+folium
+opencv-python
+pillow
+tensorflow
+torch
+torchvision
+ultralytics
+scikit-learn
+scipy
+requests
+python-dotenv
