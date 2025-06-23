@@ -1,13 +1,6 @@
 streamlit
-streamlit-folium
 folium
-opencv-python
+streamlit-folium
+geopandas
 pillow
-tensorflow
-torch
-torchvision
-ultralytics
-scikit-learn
-scipy
-requests
-python-dotenv
+numpy
