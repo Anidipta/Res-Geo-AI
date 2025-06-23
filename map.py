@@ -115,9 +115,9 @@ def capture_satellite_tiles(minx, miny, maxx, maxy, tile_size_meters, output_dir
     lon_tiles = math.ceil((maxx - minx) / lon_step)
     total_tiles = lat_tiles * lon_tiles
     
-    if tile_size_meters <= 100*50:
+    if tile_size_meters <= 250*50:
         zoom = 17
-    elif tile_size_meters <= 150*50:
+    elif tile_size_meters <= 1000*50:
         zoom = 16
     else:
         zoom = 15
@@ -161,7 +161,12 @@ def get_tile_images(output_dir):
     return sorted(tile_files)
 
 def render_map_page():
-    st.markdown('<div class="page-header" style="text-align: center; padding: 20px; background-color: #667eea; border-radius: 10px; margin-bottom: 20px; color: white; font-family: Arial, sans-serif; font-size: 2rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);"><h1>🗺️ Interactive State Analysis</h1></div>', unsafe_allow_html=True)
+    
+    if st.button("← Back to Home", key="back_btn"):
+        st.session_state.current_page = 'home'
+        st.rerun()
+        
+    st.markdown('<div class="hero-content"><h1>🗺️ Interactive State Analysis</h1></div>', unsafe_allow_html=True)
     
     df = load_geodata()
     
@@ -274,6 +279,3 @@ def render_map_page():
         else:
             st.info("Please select a state to view the map")
     
-    if st.button("← Back to Home", key="back_btn"):
-        st.session_state.current_page = 'home'
-        st.rerun()
