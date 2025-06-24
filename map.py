@@ -1,187 +1,129 @@
 import streamlit as st
-import geopandas as gpd
-import folium
 from streamlit_folium import st_folium
 import os
-import requests
-import numpy as np
-from PIL import Image
-import io
-import math
-import time
 import shutil
-import pandas as pd
+from PIL import Image
+
+# Import our components
+from components.geo_map import (
+    load_geodata, 
+    display_state_map_and_tiles, 
+    capture_satellite_tiles, 
+    get_limited_tile_images
+)
+from components.flood import (
+    process_flood_prediction,
+    get_flooded_images,
+    cleanup_prediction_data,
+    get_prediction_summary
+)
 
 @st.cache_data
-def load_geodata():
-    df = pd.read_csv("src/India_new_political_map/india_map.csv")
-    return df
+def cached_load_geodata():
+    """Cached version of geodata loading"""
+    return load_geodata()
 
-def display_state_map_and_tiles(df, state_name, tiles_number=10):
-    state_row = df[df['ST_NAME'].str.lower() == state_name.lower()]
+def display_tile_images(tile_images, output_dir, columns=5, max_display=10):
+    """Display tile images in a grid layout"""
+    if not tile_images:
+        st.write("No tiles found")
+        return
+    
+    # Limit to max_display images
+    display_images = tile_images[:max_display]
+    st.write(f"**Showing {len(display_images)} of {len(tile_images)} tiles:**")
+    
+    # Create 2x5 grid (2 rows of 5 columns each)
+    for row in range(0, len(display_images), columns):
+        cols = st.columns(columns)
+        for col_idx, tile_idx in enumerate(range(row, min(row + columns, len(display_images)))):
+            with cols[col_idx]:
+                tile_name = display_images[tile_idx]
+                tile_path = os.path.join(output_dir, tile_name)
+                if os.path.exists(tile_path):
+                    try:
+                        image = Image.open(tile_path)
+                        st.image(image, caption=tile_name.split('_')[1], use_container_width=True)
+                    except Exception as e:
+                        st.error(f"Error loading {tile_name}: {e}")
+    
+    if len(tile_images) > max_display:
+        st.info(f"... and {len(tile_images) - max_display} more tiles")
 
-    if state_row.empty:
-        return None, None
+def display_flooded_images_section(state_name):
+    """Display section for flooded images"""
+    flooded_images = get_flooded_images(f"output/flooded/{state_name.replace(' ', '_')}")
     
-    state_data = state_row.iloc[0]
+    if not flooded_images:
+        st.warning("No flooded areas detected (water > 50%)")
+        return
     
-    if 'geometry' in state_data and state_data['geometry']:
-        from shapely import wkt
-        geometry = wkt.loads(state_data['geometry'])
-        minx, miny, maxx, maxy = geometry.bounds
-    else:
-        return None, None
+    st.success(f"🌊 Found {len(flooded_images)} images with significant flooding!")
     
-    center_lat = (miny + maxy) / 2
-    center_lon = (minx + maxx) / 2
-    
-    output_dir = f"output/{state_data['ST_NAME'].replace(' ', '_')}"
-    os.makedirs(output_dir, exist_ok=True)
-    
-    tile_size_meters = tiles_number * 50
-    
-    map_obj = create_state_map(state_data, center_lat, center_lon, geometry)
-    
-    return map_obj, {
-        'state_name': state_data['ST_NAME'],
-        'bounds': (minx, miny, maxx, maxy),
-        'center': (center_lat, center_lon),
-        'tile_size': tile_size_meters,
-        'output_dir': output_dir
-    }
-
-def create_state_map(state_data, center_lat, center_lon, geometry):
-    m = folium.Map(
-        location=[center_lat, center_lon],
-        zoom_start=7,
-        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attr='Esri World Imagery'
-    )
-    
-    folium.GeoJson(
-        geometry.__geo_interface__,
-        style_function=lambda x: {
-            'color': 'red',
-            'weight': 3,
-            'fillOpacity': 0,
-            'fill': False
-        },
-        popup=f"State: {state_data['ST_NAME']}",
-        tooltip=f"State: {state_data['ST_NAME']}"
-    ).add_to(m)
-    
-    folium.Marker(
-        [center_lat, center_lon],
-        popup=f"Center: ({center_lon:.6f}, {center_lat:.6f})",
-        icon=folium.Icon(color='orange', icon='star')
-    ).add_to(m)
-    
-    return m
-
-def deg2num(lat_deg, lon_deg, zoom):
-    lat_rad = math.radians(lat_deg)
-    n = 2.0 ** zoom
-    xtile = int((lon_deg + 180.0) / 360.0 * n)
-    ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
-    return (xtile, ytile)
-
-def meters_to_degrees_lat(meters):
-    return meters / 111320
-
-def meters_to_degrees_lon(lat, meters):
-    return meters / (math.cos(math.radians(lat)) * 111320)
-
-def download_tile(x, y, z, tile_path):
-    try:
-        url = f"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
+    # Display flooded images in grid format
+    for row_start in range(0, len(flooded_images), 5):
+        row_images = flooded_images[row_start:row_start + 5]
         
-        with open(tile_path, 'wb') as f:
-            f.write(response.content)
-        return True
-    except Exception as e:
-        return False
+        # Original images row
+        st.write("**Original Satellite Images:**")
+        cols = st.columns(5)
+        for idx, img_info in enumerate(row_images):
+            with cols[idx]:
+                if os.path.exists(img_info['original_path']):
+                    original_img = Image.open(img_info['original_path'])
+                    st.image(original_img, caption=f"Area {row_start + idx + 1}", use_container_width=True)
+        
+        # Prediction images row
+        st.write("**Flood Predictions:**")
+        cols = st.columns(5)
+        for idx, img_info in enumerate(row_images):
+            with cols[idx]:
+                if os.path.exists(img_info['prediction_path']):
+                    pred_img = Image.open(img_info['prediction_path'])
+                    st.image(pred_img, caption="Flood Zones", use_container_width=True)
+        
+        if row_start + 5 < len(flooded_images):
+            st.markdown("---")
 
-def capture_satellite_tiles(minx, miny, maxx, maxy, tile_size_meters, output_dir, state_name, progress_callback=None):
-    center_lat = (miny + maxy) / 2
-    lat_step = meters_to_degrees_lat(tile_size_meters)
-    lon_step = meters_to_degrees_lon(center_lat, tile_size_meters)
+def reset_analysis_state():
+    """Reset all analysis-related session state"""
+    keys_to_remove = [
+        'analysis_started', 'analysis_complete', 'show_tiles',
+        'current_output_dir', 'prediction_complete', 'show_predictions'
+    ]
     
-    lat_tiles = math.ceil((maxy - miny) / lat_step)
-    lon_tiles = math.ceil((maxx - minx) / lon_step)
-    total_tiles = lat_tiles * lon_tiles
-    
-    if tile_size_meters <= 250*50:
-        zoom = 17
-    elif tile_size_meters <= 1000*50:
-        zoom = 16
-    else:
-        zoom = 15
-    
-    tile_count = 0
-    successful_tiles = 0
-    
-    for i in range(lat_tiles):
-        for j in range(lon_tiles):
-            tile_miny = miny + i * lat_step
-            tile_maxy = min(miny + (i + 1) * lat_step, maxy)
-            tile_minx = minx + j * lon_step
-            tile_maxx = min(minx + (j + 1) * lon_step, maxx)
-            
-            tile_center_lat = (tile_miny + tile_maxy) / 2
-            tile_center_lon = (tile_minx + tile_maxx) / 2
-            
-            x_tile, y_tile = deg2num(tile_center_lat, tile_center_lon, zoom)
-            
-            tile_filename = f"tile_{i}_{j}_z{zoom}_x{x_tile}_y{y_tile}.png"
-            tile_path = os.path.join(output_dir, tile_filename)
-            
-            success = download_tile(x_tile, y_tile, zoom, tile_path)
-            
-            if success:
-                successful_tiles += 1
-            
-            tile_count += 1
-            
-            if progress_callback:
-                progress = tile_count / total_tiles
-                progress_callback(progress)
-    
-    return successful_tiles, tile_count
-
-def get_tile_images(output_dir):
-    if not os.path.exists(output_dir):
-        return []
-    
-    tile_files = [f for f in os.listdir(output_dir) if f.endswith('.png')]
-    return sorted(tile_files)
+    for key in keys_to_remove:
+        if key in st.session_state:
+            del st.session_state[key]
 
 def render_map_page():
+    """Main function to render the map analysis page"""
     
+    # Back button
     if st.button("← Back to Home", key="back_btn"):
         st.session_state.current_page = 'home'
         st.rerun()
         
-    st.markdown('<div class="hero-content"><h1>🗺️ Interactive State Analysis</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-content"><h2>Interactive State Analysis</h2></div>', unsafe_allow_html=True)
     
-    df = load_geodata()
+    # Load geographic data
+    df = cached_load_geodata()
     
-    col1, col2 = st.columns([1, 2])
+    # Top controls section
+    col1, col2, col3 = st.columns([1, 1, 1])
     
     with col1:
-        
+        # State selection
         state_names = sorted(df['ST_NAME'].unique().tolist())
         selected_state = st.selectbox(
             "Select State",
             state_names,
             key="state_selector"
         )
-        
+    
+    with col2:
         if selected_state:
+            # Tile range selector
             tiles_range = st.slider(
                 "Tile Range",
                 min_value=10,
@@ -190,92 +132,161 @@ def render_map_page():
                 step=10,
                 key="tiles_slider"
             )
-            
-            st.markdown("---")
-            
-            if st.button("🔍 Analysis", key="analysis_btn", use_container_width=True):
+    
+    with col3:
+        if selected_state:
+            # Analysis button
+            if st.button("🔍 Start Analysis", key="analysis_btn", use_container_width=True):
                 st.session_state.analysis_started = True
                 st.session_state.selected_state = selected_state
                 st.session_state.tiles_range = tiles_range
-            
-            if 'analysis_started' in st.session_state and st.session_state.analysis_started:
-                progress_container = st.container()
-                
-                map_obj, state_info = display_state_map_and_tiles(df, selected_state, tiles_range)
-                
-                if state_info:
-                    with progress_container:
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
-                        
-                        def update_progress(progress):
-                            progress_bar.progress(progress)
-                            status_text.text(f"Processing: {progress * 100:.1f}%")
-                        
-                        minx, miny, maxx, maxy = state_info['bounds']
-                        successful_tiles, total_tiles = capture_satellite_tiles(
-                            minx, miny, maxx, maxy,
-                            state_info['tile_size'],
-                            state_info['output_dir'],
-                            state_info['state_name'],
-                            progress_callback=update_progress
-                        )
-                        
-                        status_text.text(f"✅ Complete: {successful_tiles}/{total_tiles} tiles extracted")
-                        st.session_state.analysis_complete = True
-                        st.session_state.current_output_dir = state_info['output_dir']
-            
-            if 'analysis_complete' in st.session_state and st.session_state.analysis_complete:
-                st.markdown("---")
-                
-                if st.button("📁 View Extracted Tiles", key="view_tiles_btn"):
-                    st.session_state.show_tiles = not st.session_state.get('show_tiles', False)
-                
-                if st.session_state.get('show_tiles', False):
-                    tile_images = get_tile_images(st.session_state.current_output_dir)
-                    
-                    if tile_images:
-                        st.write(f"**{len(tile_images)} tiles extracted:**")
-                        
-                        cols = st.columns(3)
-                        for idx, tile_name in enumerate(tile_images[:12]):
-                            with cols[idx % 3]:
-                                tile_path = os.path.join(st.session_state.current_output_dir, tile_name)
-                                if os.path.exists(tile_path):
-                                    image = Image.open(tile_path)
-                                    st.image(image, caption=tile_name, use_container_width=True)
-                        
-                        if len(tile_images) > 12:
-                            st.write(f"... and {len(tile_images) - 12} more tiles")
-                    else:
-                        st.write("No tiles found")
-                
-                st.markdown("---")
-                
-                col_reset, col_predict = st.columns(2)
-                
-                with col_reset:
-                    if st.button("🗑️ Reset", key="reset_btn", use_container_width=True):
-                        if os.path.exists(st.session_state.current_output_dir):
-                            shutil.rmtree("output")
-                        
-                        for key in ['analysis_started', 'analysis_complete', 'show_tiles', 'current_output_dir']:
-                            if key in st.session_state:
-                                del st.session_state[key]
-                        
-                        st.rerun()
-                
-                with col_predict:
-                    if st.button("🤖 Prediction", key="predict_btn", use_container_width=True):
-                        pass
+                # Clear previous states
+                for key in ['analysis_complete', 'show_tiles', 'prediction_complete', 'show_predictions']:
+                    if key in st.session_state:
+                        del st.session_state[key]
+    
+    # Map display section
+    if selected_state:
+        st.markdown("### 🗺️ State Map View")
+        map_obj, _ = display_state_map_and_tiles(df, selected_state, 10)
+        if map_obj:
+            # Reduce map height and center it
+            col_map1, col_map2, col_map3 = st.columns([0.1, 0.8, 0.1])
+            with col_map2:
+                st_folium(map_obj, width=None, height=500)
+    else:
+        st.info("Please select a state to view the map")
+    
+    # Analysis progress section
+    if st.session_state.get('analysis_started', False):
+        st.markdown("---")
+        st.markdown("### Analysis Progress")
         
-        st.markdown('</div>', unsafe_allow_html=True)
+        progress_container = st.container()
+        
+        map_obj, state_info = display_state_map_and_tiles(
+            df, 
+            st.session_state.selected_state, 
+            st.session_state.tiles_range
+        )
+        
+        if state_info:
+            with progress_container:
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                def update_progress(progress):
+                    progress_bar.progress(progress)
+                    status_text.text(f"Processing: {progress * 100:.1f}%")
+                
+                # Capture satellite tiles
+                successful_tiles, total_tiles = capture_satellite_tiles(
+                    state_info['bounds'],
+                    state_info['tile_params'],
+                    state_info['output_dir'],
+                    state_info['state_name'],
+                    progress_callback=update_progress
+                )
+                
+                status_text.text(f"✅ Complete: {successful_tiles}/{total_tiles} tiles extracted")
+                st.session_state.analysis_complete = True
+                st.session_state.current_output_dir = state_info['output_dir']
+                st.session_state.current_state_name = state_info['state_name']
     
-    with col2:
-        if selected_state:
-            map_obj, _ = display_state_map_and_tiles(df, selected_state, 10)
-            if map_obj:
-                st_folium(map_obj, width=700, height=700)
-        else:
-            st.info("Please select a state to view the map")
+    # Post-analysis controls
+    if st.session_state.get('analysis_complete', False):
+        st.markdown("---")
+        st.markdown("### 🛠️ Analysis Tools")
+        
+        # Action buttons in columns
+        col_tiles, col_predict, col_reset = st.columns(3)
+        
+        with col_tiles:
+            view_tiles_btn = st.button("📁 View Extracted Tiles", key="view_tiles_btn", use_container_width=True)
+        
+        with col_predict:
+            predict_btn = st.button("🤖 Flood Prediction", key="predict_btn", use_container_width=True)
+        
+        with col_reset:
+            if st.button("🗑️ Reset Analysis", key="reset_btn", use_container_width=True):
+                if os.path.exists("output"):
+                    shutil.rmtree("output")
+                reset_analysis_state()
+                st.rerun()
+        
+        # Handle button clicks
+        if view_tiles_btn:
+            st.session_state.show_tiles = not st.session_state.get('show_tiles', False)
+        
+        if predict_btn:
+            st.session_state.prediction_started = True
     
+    # Extracted tiles section with expander
+    if st.session_state.get('show_tiles', False) and st.session_state.get('analysis_complete', False):
+        tile_images = get_limited_tile_images(st.session_state.current_output_dir)
+        
+        with st.expander("📁 Extracted Satellite Tiles", expanded=True):
+            display_tile_images(tile_images, st.session_state.current_output_dir)
+    
+    # Prediction progress section
+    if st.session_state.get('prediction_started', False):
+        st.markdown("---")
+        st.markdown("### 🌊 Flood Prediction Analysis")
+        
+        progress_container = st.container()
+        
+        with progress_container:
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            def update_prediction_progress(progress):
+                progress_bar.progress(progress)
+                status_text.text(f"Analyzing images: {progress * 100:.1f}%")
+            
+            # Process flood prediction
+            prediction_result = process_flood_prediction(
+                st.session_state.current_output_dir,
+                st.session_state.current_state_name,
+                progress_callback=update_prediction_progress
+            )
+            
+            if 'error' in prediction_result:
+                st.error(f"Prediction failed: {prediction_result['error']}")
+            else:
+                total_images = prediction_result['total_images']
+                total_flooded = prediction_result['total_flooded']
+                flooded_percentage = prediction_result['flooded_percentage']
+                
+                status_text.text(f"✅ Analysis Complete!")
+                
+                # Display summary
+                col_summary1, col_summary2, col_summary3 = st.columns(3)
+                
+                with col_summary1:
+                    st.metric("Total Images", total_images)
+                
+                with col_summary2:
+                    st.metric("Flooded Areas", total_flooded)
+                
+                with col_summary3:
+                    st.metric("Flood Percentage", f"{flooded_percentage:.1f}%")
+                
+                st.session_state.prediction_complete = True
+                st.session_state.prediction_started = False
+                
+                # Auto-show predictions if flooded areas found
+                if total_flooded > 0:
+                    st.session_state.show_predictions = True
+    
+    # Flood predictions section with expander
+    if st.session_state.get('prediction_complete', False):
+        
+        # Show predictions button
+        view_pred_btn = st.button("🌊 View Flood Predictions", key="view_predictions_btn", use_container_width=True)
+        if view_pred_btn:
+            st.session_state.show_predictions = not st.session_state.get('show_predictions', False)
+        
+        # Expandable section for predicted images
+        if st.session_state.get('show_predictions', False):
+            with st.expander("🌊 Flooded Areas Detection", expanded=True):
+                display_flooded_images_section(st.session_state.current_state_name)

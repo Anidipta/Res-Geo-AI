@@ -3,6 +3,9 @@ import base64
 from pathlib import Path
 from styles import apply_custom_styles
 from map import render_map_page
+from components import flood
+
+flood.initialize_flood_model()
 
 def get_base64_logo():
     """Convert logo to base64 string"""
