@@ -18,6 +18,23 @@ from components.flood import (
     get_prediction_summary
 )
 
+# Add custom CSS to prevent unnecessary reruns
+st.markdown("""
+<style>
+    /* Stable container sizes */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: none;
+    }
+    
+    /* Prevent map container from triggering reruns */
+    .folium-map {
+        position: relative !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_data
 def cached_load_geodata():
     """Cached version of geodata loading"""
@@ -55,7 +72,7 @@ def display_flooded_images_section(state_name):
     flooded_images = get_flooded_images(f"output/flooded/{state_name.replace(' ', '_')}")
     
     if not flooded_images:
-        st.warning("No flooded areas detected (water > 50%)")
+        st.warning("No flooded areas detected")
         return
     
     st.success(f"🌊 Found {len(flooded_images)} images with significant flooding!")
@@ -98,13 +115,8 @@ def reset_analysis_state():
 
 def render_map_page():
     """Main function to render the map analysis page"""
-    
-    # Back button
-    if st.button("← Back to Home", key="back_btn"):
-        st.session_state.current_page = 'home'
-        st.rerun()
         
-    st.markdown('<div class="hero-content"><h2>Interactive State Analysis</h2></div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-title"><h2>Interactive State Analysis</h2></div>', unsafe_allow_html=True)
     
     # Load geographic data
     df = cached_load_geodata()
@@ -147,13 +159,13 @@ def render_map_page():
     
     # Map display section
     if selected_state:
-        st.markdown("### 🗺️ State Map View")
+        st.markdown("### State Map View")
         map_obj, _ = display_state_map_and_tiles(df, selected_state, 10)
         if map_obj:
             # Reduce map height and center it
             col_map1, col_map2, col_map3 = st.columns([0.1, 0.8, 0.1])
             with col_map2:
-                st_folium(map_obj, width=None, height=500)
+                st_folium(map_obj, width=None, height=700)
     else:
         st.info("Please select a state to view the map")
     
@@ -225,7 +237,7 @@ def render_map_page():
     if st.session_state.get('show_tiles', False) and st.session_state.get('analysis_complete', False):
         tile_images = get_limited_tile_images(st.session_state.current_output_dir)
         
-        with st.expander("📁 Extracted Satellite Tiles", expanded=True):
+        with st.expander("Extracted Satellite Tiles", expanded=True):
             display_tile_images(tile_images, st.session_state.current_output_dir)
     
     # Prediction progress section
