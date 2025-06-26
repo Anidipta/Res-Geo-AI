@@ -4,6 +4,7 @@ from pathlib import Path
 from styles import apply_custom_styles
 from map import render_map_page
 from components import flood
+from victim import render_victim_page
 
 flood.initialize_flood_model()
 
@@ -232,14 +233,21 @@ def render_solution_page():
         </div>
     """, unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3, col4, col5 = st.columns([1, 2,1,2 1])
     with col2:
         st.markdown('<div class="launch-section">', unsafe_allow_html=True)
-        if st.button("🗺️ Launch Interactive Map", help="Access Advanced Geospatial Interface", key="map_launch"):
+        if st.button("🗺️ Launch Satellite Map", help="Access Advanced Geospatial Interface", key="map_launch"):
             st.session_state.current_tab = 'MAP'
             render_map_page()
             st.rerun()
     
+    with col4:
+        st.markdown('<div class="launch-section">', unsafe_allow_html=True)
+        if st.button("📍 Launch Victim Finder", help="Access Victim Localization Interface", key="victim_finder_launch"):
+            st.session_state.current_tab = 'VICTIM'
+            render_victim_page()
+            st.rerun()
+            
     st.markdown("""
         <div class="solution-grid">
             <div class="solution-card">
@@ -409,6 +417,8 @@ def main():
         render_about_page()
     elif st.session_state.current_tab == 'MAP':
         render_map_page()
+    elif st.session_state.current_tab == 'VICTIM':
+        render_victim_page()
 
 if __name__ == "__main__":
     main()
