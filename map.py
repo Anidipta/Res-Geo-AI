@@ -169,9 +169,10 @@ def render_map_page():
     else:
         st.info("Please select a state to view the map")
     
+    st.markdown('<div class="indian-flag-divider"></div>', unsafe_allow_html=True)
+        
     # Analysis progress section
     if st.session_state.get('analysis_started', False):
-        st.markdown("---")
         st.markdown("### Analysis Progress")
         
         progress_container = st.container()
@@ -242,7 +243,7 @@ def render_map_page():
     
     # Prediction progress section
     if st.session_state.get('prediction_started', False):
-        st.markdown("---")
+        st.markdown('<div class="indian-flag-divider"></div>', unsafe_allow_html=True)
         st.markdown("### 🌊 Flood Prediction Analysis")
         
         progress_container = st.container()

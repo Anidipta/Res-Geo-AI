@@ -1,3 +1,2 @@
 [server]
 runOnSave = false
-fileWatcherType = "none"

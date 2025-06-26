@@ -233,7 +233,7 @@ def render_solution_page():
         </div>
     """, unsafe_allow_html=True)
     
-    col1, col2, col3, col4, col5 = st.columns([1, 2,1,2 1])
+    col1, col2, col3, col4, col5 = st.columns([1, 2,1,2 ,1])
     with col2:
         st.markdown('<div class="launch-section">', unsafe_allow_html=True)
         if st.button("🗺️ Launch Satellite Map", help="Access Advanced Geospatial Interface", key="map_launch"):

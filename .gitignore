@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 __pycache__
-src/ models/   
+src/model/   
 output/
 components/__pycache__/
+src/model/best.pt
