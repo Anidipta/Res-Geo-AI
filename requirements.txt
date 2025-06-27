@@ -6,4 +6,5 @@ pillow
 numpy
 kagglehub
 ultralytics
+transformers
 requests
