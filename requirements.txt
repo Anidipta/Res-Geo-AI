@@ -4,3 +4,6 @@ streamlit-folium
 geopandas
 pillow
 numpy
+kagglehub
+ultralytics
+requests

@@ -112,8 +112,8 @@ def apply_custom_styles():
         }
         
         .logo-image {
-            width: 130px;
-            height: 130px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 4px solid;
             box-shadow: 0 15px 40px rgba(255, 153, 51, 0.4);

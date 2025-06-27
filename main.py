@@ -111,9 +111,8 @@ def create_custom_tabs():
             st.rerun()
         
     with col2:
-        dis = "BACK" if st.session_state.get('current_tab', 'MAP') == 'SOLUTION' else "LIVE"
         solution_active = "active" if st.session_state.get('current_tab', 'HOME') == 'SOLUTION' else ""
-        if st.button(dis, key="solution_btn", help="Access Solutions"):
+        if st.button("LIVE", key="solution_btn", help="Access Solutions"):
             st.session_state.current_tab = 'SOLUTION'
             st.rerun()
     
@@ -185,11 +184,6 @@ def render_home_page():
                                 <div class="feature-icon">🗺️</div>
                                 <h3>Smart Tile Generation</h3>
                                 <p>Intelligent map tiling with adaptive resolution and real-time processing capabilities</p>
-                            </div>
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.3s;">
-                                <div class="feature-icon">📊</div>
-                                <h3>AI Analytics</h3>
-                                <p>Machine learning-powered insights for predictive flood modeling and risk assessment</p>
                             </div>
                             <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.4s;">
                                 <div class="feature-icon">🛰️</div>
