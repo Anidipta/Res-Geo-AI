@@ -80,8 +80,7 @@ The system implements a dual-modality approach utilizing both satellite remote s
 <td style="padding: 12px 20px; border-bottom: 1px solid #e1e5e9; font-weight: 600; color: #7B1FA2;">Backend Infrastructure</td>
 <td style="padding: 12px 20px; border-bottom: 1px solid #e1e5e9;">
 <span style="background-color: #FF4B4B; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px;">Streamlit</span>
-<span style="background-color: #009688; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px;">FastAPI</span>
-<span style="background-color: #2496ED; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;">Docker</span>
+<span style="background-color: #009688; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px;">Kaggle</span>
 </td>
 <td style="padding: 12px 20px; text-align: center; border-bottom: 1px solid #e1e5e9; color: #424242;">Web Framework & Deployment</td>
 </tr>
