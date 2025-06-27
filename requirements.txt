@@ -9,3 +9,4 @@ ultralytics
 transformers
 requests
 opencv-python
+opencv-python-headless
