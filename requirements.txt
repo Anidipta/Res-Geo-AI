@@ -8,3 +8,4 @@ kagglehub
 ultralytics
 transformers
 requests
+opencv-python
