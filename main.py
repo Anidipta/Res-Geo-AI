@@ -19,6 +19,21 @@ def get_base64_logo():
     except:
         return None
 
+def get_base64_image(image_path):
+    """Helper function to convert image to base64"""
+    try:
+        from pathlib import Path
+        import base64
+        
+        img_path = Path(image_path)
+        if img_path.exists():
+            with open(img_path, "rb") as img_file:
+                return base64.b64encode(img_file.read()).decode()
+        else:
+            return None
+    except:
+        return None
+    
 def create_custom_tabs():
     st.markdown("""
     <style>
@@ -137,88 +152,252 @@ def create_custom_tabs():
             st.rerun()
 
 def render_home_page():
+    # Get base64 encoded images
+    logo_base64 = get_base64_logo()
+    workflow_base64 = get_base64_image("src/images/work-flow.png")
+    
+    # Floating background elements
     st.markdown("""
         <div class="floating-elements">
             <div class="floating-icon" style="top: 10%; left: 5%; animation-delay: 0s;">🗺️</div>
             <div class="floating-icon" style="top: 20%; right: 10%; animation-delay: 1s;">🌍</div>
             <div class="floating-icon" style="top: 60%; left: 8%; animation-delay: 2s;">📍</div>
-            <div class="floating-icon" style="top: 40%; right: 15%; animation-delay: 3s;">🛰️</div>
-            <div class="floating-icon" style="top: 70%; left: 20%; animation-delay: 4s;">📊</div>
-            <div class="floating-icon" style="top: 30%; right: 5%; animation-delay: 5s;">🎯</div>
+            <div class="floating-icon" style="top: 40%; right: 15%; animation-delay: 1s;">🛰️</div>
+            <div class="floating-icon" style="top: 70%; left: 20%; animation-delay: 0s;">📊</div>
+            <div class="floating-icon" style="top: 30%; right: 5%; animation-delay: 1s;">🎯</div>
         </div>
     """, unsafe_allow_html=True)
     
-    logo_base64 = get_base64_logo()
+    # Hero Section
+    st.markdown("""
+        <div class="hero-section" style=" width: 100%; max-width: 8000px; margin: auto; position: relative;">
+            <div class="hero-content">
+                <h1 class="hero-title gradient-text">Res Geo AI</h1>
+                <div class="hero-tagline">
+                    <span class="tagline-highlight">Satellite-to-Drone</span> Dual-Modality System
+                </div>
+                <p class="hero-subtitle fade-in-up">
+                    Advanced AI-powered platform for flood detection and victim localization in disaster response operations
+                </p>
+                <div class="hero-buttons fade-in-up">
+                    <button class="cta-primary">🚀 Get Started</button>
+                    <button class="cta-secondary">📹 Watch Demo</button>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
     
-    if logo_base64:
+    # Stats Section
+    st.markdown("""
+        <div class="stats-section fade-in-up">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">🏛️</div>
+                    <div class="stat-number">28+</div>
+                    <div class="stat-label">States Covered</div>
+                </div>
+                <div class="stat-card" style="animation-delay: 0.1s;">
+                    <div class="stat-icon">🏘️</div>
+                    <div class="stat-number">700+</div>
+                    <div class="stat-label">Districts Mapped</div>
+                </div>
+                <div class="stat-card" style="animation-delay: 0.2s;">
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-number">AI</div>
+                    <div class="stat-label">Powered Analysis</div>
+                </div>
+                <div class="stat-card" style="animation-delay: 0.3s;">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Real-time Monitoring</div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Workflow Section
+    if workflow_base64:
         st.markdown(f"""
-                <div>
-                    <div>
-                    <h1 class="hero-title gradient-text">Res Geo AI</h1>
-                    <p class="hero-subtitle fade-in-up">A Satellite-to-Drone Dual-Modality System for Flood Detection and Victim Localization in Disaster Response</p>
-                        <div class="stats-container fade-in-up">
-                            <div class="stat-card">
-                                <div class="stat-number">28+</div>
-                                <div class="stat-label">States Covered</div>
-                            </div>
-                            <div class="stat-card" style="animation-delay: 0.2s;">
-                                <div class="stat-number">700+</div>
-                                <div class="stat-label">Districts Mapped</div>
-                            </div>
-                            <div class="stat-card" style="animation-delay: 0.4s;">
-                                <div class="stat-number">AI</div>
-                                <div class="stat-label">Powered Analysis</div>
-                            </div>
-                            <div class="stat-card" style="animation-delay: 0.6s;">
-                                <div class="stat-number">24/7</div>
-                                <div class="stat-label">Real-time Monitoring</div>
-                            </div>
+            <div class="workflow-section">
+                <div class="section-header">
+                    <h2 class="section-title gradient-text">How It Works</h2>
+                    <p class="section-subtitle">Our intelligent dual-modality approach to disaster response</p>
+                </div>
+                <div class="workflow-container fade-in-up">
+                    <img src="data:image/png;base64,{workflow_base64}" class="workflow-image" alt="Res Geo AI Workflow">
+                </div>
+                <div class="workflow-steps">
+                    <div class="step-item fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>Satellite Detection</h3>
+                            <p>Real-time satellite imagery analysis for flood identification</p>
                         </div>
-                        <div class="features-grid">
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.1s;">
-                                <div class="feature-icon">🎯</div>
-                                <h3>Precision Mapping</h3>
-                                <p>Advanced geospatial analysis with centimeter-level accuracy for disaster response planning</p>
-                            </div>
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.2s;">
-                                <div class="feature-icon">🗺️</div>
-                                <h3>Smart Tile Generation</h3>
-                                <p>Intelligent map tiling with adaptive resolution and real-time processing capabilities</p>
-                            </div>
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.4s;">
-                                <div class="feature-icon">🛰️</div>
-                                <h3>Dual-Modal Detection</h3>
-                                <p>Seamless integration of satellite imagery and drone surveillance for comprehensive coverage</p>
-                            </div>
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.5s;">
-                                <div class="feature-icon">🌊</div>
-                                <h3>Flood Intelligence</h3>
-                                <p>Real-time flood detection with victim localization using advanced computer vision algorithms</p>
-                            </div>
-                            <div class="feature-card glow-effect fade-in-up" style="animation-delay: 0.6s;">
-                                <div class="feature-icon">⚡</div>
-                                <h3>Rapid Response</h3>
-                                <p>Instant alert system with automated emergency response coordination and resource allocation</p>
-                            </div>
+                    </div>
+                    <div class="step-item fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>Drone Deployment</h3>
+                            <p>Autonomous UAV dispatch for detailed ground assessment</p>
+                        </div>
+                    </div>
+                    <div class="step-item fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>Victim Localization</h3>
+                            <p>AI-powered victim detection and precise location mapping</p>
+                        </div>
+                    </div>
+                    <div class="step-item fade-in-up" style="animation-delay: 0.4s;">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h3>Rapid Response</h3>
+                            <p>Instant alert system and rescue coordination</p>
                         </div>
                     </div>
                 </div>
+            </div>
         """, unsafe_allow_html=True)
     
+    # Features Section
+    st.markdown("""
+        <div class="features-section">
+            <div class="section-header">
+                <h2 class="section-title gradient-text">Core Capabilities</h2>
+                <p class="section-subtitle">Advanced technology stack for comprehensive disaster management</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="feature-icon-large">🎯</div>
+                    <h3>Precision Mapping</h3>
+                    <p>Centimeter-level accuracy geospatial analysis with advanced satellite data processing and AI-enhanced coordinate systems</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">Computer Vision</span>
+                        <span class="tech-badge">GIS</span>
+                    </div>
+                </div>
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="feature-icon-large">🛰️</div>
+                    <h3>Dual-Modal Detection</h3>
+                    <p>Seamless integration of satellite imagery and drone surveillance for comprehensive real-time coverage and analysis</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">Remote Sensing</span>
+                        <span class="tech-badge">IoT</span>
+                    </div>
+                </div>
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="feature-icon-large">🌊</div>
+                    <h3>Flood Intelligence</h3>
+                    <p>Real-time flood detection with victim localization using advanced computer vision and machine learning algorithms</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">Deep Learning</span>
+                        <span class="tech-badge">Neural Networks</span>
+                    </div>
+                </div>
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="feature-icon-large">⚡</div>
+                    <h3>Rapid Response</h3>
+                    <p>Instant alert system with automated emergency response coordination and intelligent resource allocation</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">Real-time API</span>
+                        <span class="tech-badge">Cloud Computing</span>
+                    </div>
+                </div>
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="feature-icon-large">🗺️</div>
+                    <h3>Smart Tile Generation</h3>
+                    <p>Intelligent map tiling with adaptive resolution and real-time processing for optimized visualization</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">WebGL</span>
+                        <span class="tech-badge">Optimization</span>
+                    </div>
+                </div>
+                <div class="feature-card premium-card fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="feature-icon-large">🧠</div>
+                    <h3>Predictive Analytics</h3>
+                    <p>Advanced AI models for disaster prediction, risk assessment, and proactive emergency planning</p>
+                    <div class="feature-tech">
+                        <span class="tech-badge">Machine Learning</span>
+                        <span class="tech-badge">Predictive Modeling</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Technology Stack Section
+    st.markdown("""
+        <div class="tech-stack-section">
+            <div class="section-header">
+                <h2 class="section-title gradient-text">Technology Stack</h2>
+                <p class="section-subtitle">Built with cutting-edge technologies for maximum performance</p>
+            </div>
+            <div class="tech-categories">
+                <div class="tech-category fade-in-up">
+                    <h3>🤖 AI & Machine Learning</h3>
+                    <div class="tech-items">
+                        <span class="tech-item">TensorFlow</span>
+                        <span class="tech-item">PyTorch</span>
+                        <span class="tech-item">OpenCV</span>
+                        <span class="tech-item">Scikit-learn</span>
+                    </div>
+                </div>
+                <div class="tech-category fade-in-up" style="animation-delay: 0.1s;">
+                    <h3>🗺️ Geospatial & Mapping</h3>
+                    <div class="tech-items">
+                        <span class="tech-item">GDAL</span>
+                        <span class="tech-item">Folium</span>
+                        <span class="tech-item">Leaflet</span>
+                        <span class="tech-item">PostGIS</span>
+                    </div>
+                </div>
+                <div class="tech-category fade-in-up" style="animation-delay: 0.2s;">
+                    <h3>☁️ Cloud & Infrastructure</h3>
+                    <div class="tech-items">
+                        <span class="tech-item">AWS</span>
+                        <span class="tech-item">Docker</span>
+                        <span class="tech-item">Kubernetes</span>
+                        <span class="tech-item">FastAPI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Call-to-Action Section
     st.markdown("""
         <div class="cta-section">
             <div class="indian-flag-divider"></div>
             <div class="patriotic-container">
-                <div class="gradient-text" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; text-align: center;">
-                    🇮🇳 Empowering India's Disaster Preparedness 🇮🇳
+                <div class="patriotic-header">
+                    <div class="flag-icon">🇮🇳</div>
+                    <div class="patriotic-title gradient-text">Empowering India's Disaster Preparedness</div>
+                    <div class="flag-icon">🇮🇳</div>
                 </div>
-                <p style="color: rgba(255,255,255,0.8); text-align: center; font-size: 1.1rem; margin-bottom: 2rem;">
+                <p class="patriotic-subtitle">
                     Leveraging cutting-edge AI and geospatial technology to protect communities and save lives across the nation
                 </p>
+                <div class="patriotic-stats">
+                    <div class="patriotic-stat">
+                        <span class="stat-highlight">1.4B+</span>
+                        <span>Citizens Protected</span>
+                    </div>
+                    <div class="patriotic-stat">
+                        <span class="stat-highlight">28</span>
+                        <span>States & UTs</span>
+                    </div>
+                    <div class="patriotic-stat">
+                        <span class="stat-highlight">∞</span>
+                        <span>Lives Matter</span>
+                    </div>
+                </div>
+                <div class="mission-statement">
+                    <p>"Building a resilient digital infrastructure for disaster response - from the Himalayas to the Indian Ocean, every life protected by AI."</p>
+                </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
-
+    
 def render_solution_page():
     st.markdown("""
         <div class="solution-header">
@@ -280,7 +459,7 @@ def render_solution_page():
 def render_demo_page():
     st.markdown("""
         <div class="demo-header">
-            <h1 class="page-title gradient-text">🎮 Live Demonstrations</h1>
+            <h1 class="page-title gradient-text">Live Demonstrations</h1>
             <p class="page-subtitle">Experience our technology in action</p>
         </div>
     """, unsafe_allow_html=True)
