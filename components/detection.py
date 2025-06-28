@@ -79,8 +79,6 @@ def load_yolo_model():
                         raise e
                 
         except Exception as e:
-            st.error(f"Error loading YOLO model: {e}")
-            st.info("Trying alternative loading method...")
             
             # Method 3: Fallback - try loading without explicit device handling
             try:
