@@ -30,7 +30,7 @@ def load_yolo_model():
                 try:
                     device = 'cuda' if torch.cuda.is_available() else 'cpu'
                     _model = YOLO(model_file)
-                    _model.to(device)
+                    _model.to_empty(device) 
                     _model.eval()
                     
                 except RuntimeError as e:
