@@ -176,9 +176,7 @@ def render_home_page():
                 <div class="hero-tagline">
                     <span class="tagline-highlight">Satellite-to-Drone</span> Dual-Modality System
                 </div>
-                <p class="hero-subtitle fade-in-up">
-                    Advanced AI-powered platform for flood detection and victim localization in disaster response operations
-                </p>
+                <p class="hero-subtitle fade-in-up">Advanced AI-powered platform for flood detection and victim localization in disaster response operations</p>
             </div>
         </div>
     """, unsafe_allow_html=True)
