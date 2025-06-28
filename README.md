@@ -10,7 +10,7 @@ A comprehensive disaster response platform combining satellite imagery analysis 
 
 ## Architecture Overview
 
-The system implements a dual-modality approach utilizing both satellite remote sensing and drone-based reconnaissance to provide comprehensive disaster monitoring capabilities.
+The system employs a dual-modality approach, utilizing both satellite remote sensing and drone-based reconnaissance, to provide comprehensive disaster monitoring capabilities.
 
 ```
 📦 ResGeoAI/
@@ -22,7 +22,8 @@ The system implements a dual-modality approach utilizing both satellite remote s
 ├── src/
 │   ├── India_new_political_map/  # Administrative boundary datasets
 │   └── images/
-├── main.py                   # Streamlit application entry point
+│   └── model/                    # Temporal Model storing
+├── app.py                    # Streamlit application entry point
 ├── map.py                    # Interactive cartographic interface
 ├── styles.py                 # UI styling configuration
 ├── victim.py                 # Victim localization algorithms
@@ -45,6 +46,14 @@ The system implements a dual-modality approach utilizing both satellite remote s
 - **Spatial Analytics**: Advanced GIS operations for disaster mapping
 - **Coordinate Transformation**: Multi-projection support for Indian reference systems
 - **Tile Generation**: Optimized map rendering for scalable visualization
+
+## Unique Selling Proposition (USP) 
+
+- Dual-Modality Integration: Blends satellite’s wide-area flood mapping with drones’ close-up victim detection for complete situational awareness.
+- Automated Prioritization: AI instantly identifies flood zones and victims, ranking rescue needs with minimal manual input.
+- Scalability and Flexibility: Operates seamlessly across cities, villages, and remote regions, adapting to any disaster landscape.
+- Real-Time Data Fusion: Continuously merges satellite flood maps with live drone imagery for up-to-date disaster insights.
+- Minimized Human Risk: Guides rescue teams directly to victims using precise GPS, reducing exposure to danger.
 
 ## Technical Stack
 
@@ -120,11 +129,6 @@ The system implements a dual-modality approach utilizing both satellite remote s
 <td style="padding: 10px 20px; text-align: center; border-bottom: 1px solid #e1e5e9; color: #28a745; font-weight: 600;">&lt;2.1%</td>
 <td style="padding: 10px 20px; text-align: center; border-bottom: 1px solid #e1e5e9;">🟢 Superior</td>
 </tr>
-<tr style="background-color: #f8f9ff;">
-<td style="padding: 10px 20px; border-bottom: 1px solid #e1e5e9;"><strong>System Uptime</strong></td>
-<td style="padding: 10px 20px; text-align: center; border-bottom: 1px solid #e1e5e9; color: #dc3545; font-weight: 600;">99.7%</td>
-<td style="padding: 10px 20px; text-align: center; border-bottom: 1px solid #e1e5e9;">🟢 Enterprise Grade</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -162,20 +166,6 @@ streamlit run main.py
 3. **UAV Deployment**: Automated drone dispatch to detected areas
 4. **Victim Localization**: Computer vision analysis of drone imagery
 5. **Alert Generation**: Real-time notifications to emergency response teams
-
-## Development Roadmap
-
-### Q3 2025
-- Transformer-based deep learning architectures
-- Multi-modal sensor fusion algorithms
-- Edge computing deployment for reduced latency
-- Predictive modeling with 48-hour forecasting
-
-### Q4 2025
-- Multi-hazard detection capabilities (cyclones, earthquakes)
-- IoT sensor network integration
-- Mobile application for field operations
-- International deployment framework
 
 ## License
 
