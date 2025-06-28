@@ -156,18 +156,6 @@ def render_home_page():
     logo_base64 = get_base64_logo()
     workflow_base64 = get_base64_image("src/images/work-flow.png")
     
-    # Floating background elements
-    st.markdown("""
-        <div class="floating-elements">
-            <div class="floating-icon" style="top: 10%; left: 5%; animation-delay: 0s;">🗺️</div>
-            <div class="floating-icon" style="top: 20%; right: 10%; animation-delay: 1s;">🌍</div>
-            <div class="floating-icon" style="top: 60%; left: 8%; animation-delay: 2s;">📍</div>
-            <div class="floating-icon" style="top: 40%; right: 15%; animation-delay: 1s;">🛰️</div>
-            <div class="floating-icon" style="top: 70%; left: 20%; animation-delay: 0s;">📊</div>
-            <div class="floating-icon" style="top: 30%; right: 5%; animation-delay: 1s;">🎯</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
     # Hero Section
     st.markdown("""
         <div class="hero-section" style=" width: 100%; max-width: 8000px; margin: auto; position: relative;">

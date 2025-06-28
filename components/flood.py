@@ -2,23 +2,30 @@ import os
 import torch
 import numpy as np
 from PIL import Image
-from transformers import AutoImageProcessor, SegformerForSemanticSegmentation
 import shutil
+from transformers import AutoImageProcessor, SegformerForSemanticSegmentation
 import torch
 
-# Initialize model and processor
 def initialize_flood_model():
     """Initialize the Segformer model for flood prediction"""
     try:
-        processor = AutoImageProcessor.from_pretrained("wu-pr-gw/segformer-b2-finetuned-with-LoveDA")
+        # Choose device
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Load processor
+        processor = AutoImageProcessor.from_pretrained(
+            "wu-pr-gw/segformer-b2-finetuned-with-LoveDA"
+        )
+
+        # Safely load model without meta tensor issues
         model = SegformerForSemanticSegmentation.from_pretrained(
             "wu-pr-gw/segformer-b2-finetuned-with-LoveDA",
-            low_cpu_mem_usage=False
+            low_cpu_mem_usage=False  # IMPORTANT: disables meta tensors
         ).to(device)
 
         model.eval()
         return processor, model, device
+
     except Exception as e:
         print(f"Error initializing model: {e}")
         return None, None, None
