@@ -179,10 +179,6 @@ def render_home_page():
                 <p class="hero-subtitle fade-in-up">
                     Advanced AI-powered platform for flood detection and victim localization in disaster response operations
                 </p>
-                <div class="hero-buttons fade-in-up">
-                    <button class="cta-primary">🚀 Get Started</button>
-                    <button class="cta-secondary">📹 Watch Demo</button>
-                </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
