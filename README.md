@@ -155,7 +155,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Application launch
-streamlit run main.py
+streamlit run app.py
 ```
 
 
