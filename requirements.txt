@@ -8,6 +8,5 @@ kagglehub
 ultralytics
 transformers
 requests
-opencv-python-headless
 opencv-python
 scikit-learn
