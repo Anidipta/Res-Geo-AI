@@ -9,4 +9,4 @@ ultralytics
 transformers
 requests
 scikit-learn
-opencv-python-headless
+opencv-python
