@@ -1,6 +1,5 @@
 streamlit
 folium
-opencv-python-headless
 streamlit-folium
 geopandas
 pillow
@@ -10,3 +9,4 @@ ultralytics
 transformers
 requests
 scikit-learn
+opencv-python-headless
