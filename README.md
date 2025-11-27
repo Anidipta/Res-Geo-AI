@@ -1,4 +1,3 @@
-````markdown
 <div align="center">
 <img src="src\images\LOGO_ResGeoAI.png" alt="Res Geo AI Logo" width="40%">
 </div>
@@ -206,27 +205,3 @@ CMD ["streamlit", "run", "app.py", "--server.port", "8501", "--server.headless",
 Notes:
 - Remove OS-level packages (like `libsm6`, `libxext6`, `libgl1-mesa-glx`, etc.) from `requirements.txt` — those are not PyPI packages and will make `pip install -r requirements.txt` fail.
 - If you deploy to Streamlit Cloud, push this `Dockerfile` to the repo and configure Streamlit to build using it; the apt-get line will run during the image build.
-
-Suggested `requirements.txt` (pip-only) example — keep only Python packages here:
-
-```text
-streamlit
-folium
-streamlit-folium
-geopandas
-pillow
-numpy
-kagglehub
-ultralytics
-transformers
-requests
-scikit-learn
-opencv-python
-```
-
-If you'd like, I can:
-- Remove the OS-package lines from `requirements.txt` and commit the cleaned file.
-- Add the example `Dockerfile` to the repository at the project root.
-- Add a short `setup.sh` that installs OS deps and then runs `pip install -r requirements.txt` for local development.
-
-````
