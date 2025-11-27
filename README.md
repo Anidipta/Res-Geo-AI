@@ -1,3 +1,4 @@
+````markdown
 <div align="center">
 <img src="src\images\LOGO_ResGeoAI.png" alt="Res Geo AI Logo" width="40%">
 </div>
@@ -172,3 +173,60 @@ streamlit run app.py
 MIT License - see LICENSE file for complete terms.
 
 **Developer**: Anidipta Pal - AI Engineer & Computer Vision Specialist
+
+## Streamlit Deployment (Docker / Streamlit Cloud)
+
+If you need system libraries (for example `ffmpeg`, `libsm6`, `libxext6`, or OpenGL libs) when running the app on a containerized platform or on Streamlit Cloud, install them at the OS level in a `Dockerfile` rather than putting them in `requirements.txt`.
+
+Example `Dockerfile` (minimal) for Streamlit deployment:
+
+```dockerfile
+FROM python:3.11-slim
+
+# Install system packages required by OpenCV / multimedia
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy only requirements first to leverage Docker cache
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the code
+COPY . .
+
+EXPOSE 8501
+CMD ["streamlit", "run", "app.py", "--server.port", "8501", "--server.headless", "true"]
+```
+
+Notes:
+- Remove OS-level packages (like `libsm6`, `libxext6`, `libgl1-mesa-glx`, etc.) from `requirements.txt` — those are not PyPI packages and will make `pip install -r requirements.txt` fail.
+- If you deploy to Streamlit Cloud, push this `Dockerfile` to the repo and configure Streamlit to build using it; the apt-get line will run during the image build.
+
+Suggested `requirements.txt` (pip-only) example — keep only Python packages here:
+
+```text
+streamlit
+folium
+streamlit-folium
+geopandas
+pillow
+numpy
+kagglehub
+ultralytics
+transformers
+requests
+scikit-learn
+opencv-python
+```
+
+If you'd like, I can:
+- Remove the OS-package lines from `requirements.txt` and commit the cleaned file.
+- Add the example `Dockerfile` to the repository at the project root.
+- Add a short `setup.sh` that installs OS deps and then runs `pip install -r requirements.txt` for local development.
+
+````
