@@ -10,8 +10,3 @@ transformers
 requests
 scikit-learn
 opencv-python
-libgl1-mesa-glx 
-libglib
-libsm6 
-libxrender1 
-libxext6
