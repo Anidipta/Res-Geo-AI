@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Res-GeoAI: Satellite-to-Drone Dual-Modality System</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #111111;
+      --ink2: #444444;
+      --ink3: #777777;
+      --rule: #e0e0e0;
+      --accent: #1a56db;
+      --accent2: #0e3fa8;
+      --teal: #0891b2;
+      --bg: #ffffff;
+      --bg2: #f8f9fc;
+      --tag-bg: #eef2ff;
+      --tag-fg: #3730a3;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--rule);
+      display: flex; justify-content: center;
+      padding: 0 2rem;
+    }
+    nav ul {
+      list-style: none; display: flex; gap: 0.2rem;
+      padding: 0.6rem 0;
+    }
+    nav a {
+      text-decoration: none; color: var(--ink2);
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.02em;
+      padding: 0.35rem 0.75rem; border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    nav a:hover { background: var(--bg2); color: var(--accent); }
+
+    /* ── HERO ── */
+    header {
+      max-width: 860px; margin: 0 auto;
+      padding: 5rem 2rem 3.5rem;
+      text-align: center;
+    }
+
+    .venue-badge {
+      display: inline-block;
+      background: var(--tag-bg); color: var(--tag-fg);
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.3rem 0.9rem;
+      border-radius: 99px; margin-bottom: 1.6rem;
+    }
+
+    h1 {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      font-weight: 600; line-height: 1.22;
+      color: var(--ink); margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1rem; color: var(--ink3);
+      margin-bottom: 2rem;
+    }
+
+    .authors {
+      font-size: 1rem; color: var(--ink2);
+      margin-bottom: 0.4rem;
+    }
+    .authors a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .authors a:hover { text-decoration: underline; }
+
+    .affiliations {
+      font-size: 0.85rem; color: var(--ink3);
+      margin-bottom: 2.4rem;
+    }
+
+    .btn-row {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      justify-content: center; margin-bottom: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.55rem 1.2rem; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 500;
+      text-decoration: none; transition: all 0.15s;
+      border: 1.5px solid transparent;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+    .btn-outline {
+      background: #fff; color: var(--ink2);
+      border-color: var(--rule);
+    }
+    .btn-outline:hover { border-color: #bbb; background: var(--bg2); }
+
+    .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    hr.section-rule {
+      border: none; border-top: 1px solid var(--rule);
+      max-width: 860px; margin: 0 auto;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 860px; margin: 0 auto;
+      padding: 3.5rem 2rem;
+    }
+
+    h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.65rem; font-weight: 600;
+      margin-bottom: 1.2rem; color: var(--ink);
+    }
+
+    p { color: var(--ink2); margin-bottom: 0.9rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── FIGURE ── */
+    figure {
+      margin: 2rem 0;
+      background: var(--bg2);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    figure img {
+      width: 100%; display: block;
+      /* placeholder gradient when no actual images */
+    }
+    figcaption {
+      padding: 0.75rem 1.2rem;
+      font-size: 0.82rem; color: var(--ink3);
+      border-top: 1px solid var(--rule);
+      text-align: center;
+    }
+    figcaption strong { color: var(--ink2); }
+
+    .figure-placeholder {
+      width: 100%; aspect-ratio: 16/7;
+      background: linear-gradient(135deg, #e8ecf5 0%, #dde4f0 50%, #d0daee 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.5rem;
+      color: #8899bb; font-size: 0.85rem;
+    }
+    .figure-placeholder svg { opacity: 0.4; }
+
+    /* ── PIPELINE STEPS ── */
+    .pipeline {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem;
+      margin: 2rem 0;
+    }
+    @media(max-width: 640px){ .pipeline { grid-template-columns: 1fr; } }
+
+    .pipeline-step {
+      background: var(--bg2);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 1.4rem 1.2rem;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+    .pipeline-step h3 {
+      font-size: 0.95rem; font-weight: 600;
+      margin-bottom: 0.4rem; color: var(--ink);
+    }
+    .pipeline-step p { font-size: 0.83rem; color: var(--ink3); margin: 0; }
+
+    /* ── RESULTS TABLES ── */
+    .table-wrap {
+      overflow-x: auto; margin: 1.5rem 0;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    th {
+      background: var(--bg2); color: var(--ink2);
+      font-weight: 600; font-size: 0.78rem;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 0.65rem 0.9rem; text-align: left;
+      border-bottom: 2px solid var(--rule);
+    }
+    td {
+      padding: 0.6rem 0.9rem;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink2);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.best td { background: #f0f5ff; font-weight: 600; color: var(--ink); }
+    tr:hover td { background: #fafbff; }
+
+    /* ── STAT CARDS ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin: 2rem 0;
+    }
+    @media(max-width: 640px){ .stats { grid-template-columns: repeat(2,1fr); } }
+
+    .stat-card {
+      border: 1px solid var(--rule); border-radius: 12px;
+      padding: 1.3rem 1rem; text-align: center;
+    }
+    .stat-val {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem; font-weight: 600;
+      color: var(--accent); line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--ink3); line-height: 1.3; }
+
+    /* ── TAGS ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.5rem; }
+    .tag {
+      background: var(--tag-bg); color: var(--tag-fg);
+      font-size: 0.75rem; font-weight: 500;
+      padding: 0.25rem 0.7rem; border-radius: 99px;
+    }
+
+    /* ── BIBTEX ── */
+    .bib-block {
+      background: #f7f8fb;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      position: relative;
+      margin-top: 1rem;
+    }
+    .bib-block pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; color: var(--ink2);
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .copy-btn {
+      position: absolute; top: 0.75rem; right: 0.9rem;
+      background: #fff; border: 1px solid var(--rule);
+      border-radius: 6px; padding: 0.3rem 0.7rem;
+      font-size: 0.75rem; cursor: pointer; color: var(--ink2);
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── DATASET CARD ── */
+    .dataset-card {
+      display: flex; align-items: center; gap: 1.2rem;
+      background: var(--bg2); border: 1px solid var(--rule);
+      border-radius: 12px; padding: 1.4rem 1.6rem;
+      margin-top: 1rem; text-decoration: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .dataset-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 16px rgba(26,86,219,0.08);
+    }
+    .ds-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .ds-icon svg { color: #fff; width: 22px; height: 22px; }
+    .ds-info h3 { font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-bottom: 0.15rem; }
+    .ds-info p { font-size: 0.82rem; color: var(--ink3); margin: 0; }
+
+    /* ── DEPLOY STEPS ── */
+    .deploy-steps { margin-top: 1.5rem; }
+    .deploy-step {
+      display: flex; gap: 1rem; padding: 1.2rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .deploy-step:last-child { border-bottom: none; }
+    .deploy-step .ds-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--accent); background: var(--tag-bg);
+      padding: 0.25rem 0.55rem; border-radius: 6px;
+      flex-shrink: 0; height: fit-content; margin-top: 0.1rem;
+    }
+    .deploy-step .ds-content h3 {
+      font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem;
+    }
+    .deploy-step .ds-content p {
+      font-size: 0.84rem; color: var(--ink3); margin-bottom: 0.5rem;
+    }
+    .code {
+      background: #f0f2f7; border: 1px solid var(--rule);
+      border-radius: 7px; padding: 0.7rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem; color: #334;
+      overflow-x: auto; white-space: pre;
+    }
+    .code .cm { color: #6a7a8a; }
+    .code .kw { color: #1a56db; }
+    .code .st { color: #0e7a3e; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--rule);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem; color: var(--ink3);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <ul>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#deploy">Deploy</a></li>
+    <li><a href="#bibtex">BibTeX</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="venue-badge">📄 Research Paper · 2025</div>
+  <h1>Res-GeoAI: A Satellite-to-Drone Dual-Modality System for Flood Detection and Victim Localization in Disaster Response</h1>
+  <p class="subtitle">Geospatial AI · UAV · Semantic Segmentation · Thermal Imaging</p>
+
+  <p class="authors">
+    <a href="mailto:anidipta.pal.aiml27@heritageit.edu.in">Anidipta Pal</a>
+  </p>
+  <p class="affiliations">
+    Department of Computer Science and Engineering (AIML)<br>
+    Heritage Institute of Technology, Kolkata
+  </p>
+
+  <div class="btn-row">
+    <a href="#" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Paper PDF
+    </a>
+    <a href="https://www.kaggle.com/dsv/12184019" target="_blank" class="btn btn-outline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="10"/><polyline points="12 8 12 12 14 14"/></svg>
+      HIT-MOB Dataset
+    </a>
+    <a href="#" class="btn btn-outline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77A5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
+    </a>
+    <a href="#bibtex" class="btn btn-outline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      Cite
+    </a>
+  </div>
+</header>
+
+<hr class="section-rule"/>
+
+<!-- ABSTRACT -->
+<section id="abstract">
+  <h2>Abstract</h2>
+  <div class="tags">
+    <span class="tag">Geospatial AI</span>
+    <span class="tag">UAV</span>
+    <span class="tag">Semantic Segmentation</span>
+    <span class="tag">Disaster Response</span>
+    <span class="tag">Thermal Imaging</span>
+    <span class="tag">Flood Detection</span>
+    <span class="tag">Victim Localization</span>
+  </div>
+  <p>Rapid and effective disaster response remains a critical challenge, particularly during floods, where timely identification of affected areas and victims can save lives. Existing systems often rely solely on either satellite imagery or ground-based sensors, limiting their ability to quickly and accurately pinpoint flooded zones and locate stranded individuals.</p>
+  <p>To address this gap, we propose <strong>Res-GeoAI</strong>, a geospatial AI system that integrates satellite-based flood detection with drone-assisted victim identification. Our system operates in three stages: (1) flood-zone mapping using satellite images; (2) thermal imaging for detecting victims under low-visibility conditions; and (3) GPS-based coordination for rescue operations.</p>
+  <p>By combining these capabilities, Res-GeoAI enhances the speed and precision of humanitarian interventions, providing a scalable solution for disaster management.</p>
+</section>
+
+<hr class="section-rule"/>
+
+<!-- METHOD -->
+<section id="method">
+  <h2>Method</h2>
+  <p>Res-GeoAI operates through a hierarchical multimodal pipeline that bridges macro-level satellite analysis with micro-level UAV victim localization.</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="step-num">1</div>
+      <h3>Satellite Flood Mapping</h3>
+      <p>Geographic regions are tessellated into tiles. A modified <strong>SegFormer</strong> with multiscale attention performs semantic segmentation, computing per-pixel flood probability and overall coverage.</p>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">2</div>
+      <h3>Flood Validation</h3>
+      <p>Candidate flood regions are validated via a lightweight <strong>Xception-based</strong> classifier. UAV deployment is triggered when confidence &gt; 0.7 and flood coverage &gt; 10%.</p>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-num">3</div>
+      <h3>UAV Victim Detection</h3>
+      <p>UAVs follow a spiral search pattern and apply night-vision transformation. <strong>VarifocalNet</strong> with IoU-aware loss detects victims; GPS coordinates are computed from bounding boxes.</p>
+    </div>
+  </div>
+
+  <figure>
+    <img src="images/fig1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="System Workflow" />
+    <div class="figure-placeholder" style="display:none;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <span>Figure 1 — place <code>images/fig1.png</code> here</span>
+    </div>
+    <figcaption><strong>Fig. 1.</strong> End-to-end system workflow for flood victim detection and localization. Level 1 (top): satellite segmentation and flood coverage. Level 2 (bottom): UAV victim detection and GPS localization.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="images/fig5.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Thermal Transformation"/>
+    <div class="figure-placeholder" style="display:none;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+      <span>Figure 5 — place <code>images/fig5.png</code> here</span>
+    </div>
+    <figcaption><strong>Fig. 5.</strong> RGB → Night Vision → Thermal → Infrared transformation pipeline. Clouds are effectively removed during thermal conversion, significantly improving victim visibility.</figcaption>
+  </figure>
+</section>
+
+<hr class="section-rule"/>
+
+<!-- RESULTS -->
+<section id="results">
+  <h2>Results</h2>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-val">66.30%</div>
+      <div class="stat-label">mIoU on LoveDA (Segmentation)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">76.47%</div>
+      <div class="stat-label">Water IoU (flood detection)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">0.865</div>
+      <div class="stat-label">VFNet mF1 (night vision)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">±3.2m</div>
+      <div class="stat-label">GPS localization error</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">Semantic Segmentation — LoveDA</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Background</th>
+          <th>Building</th>
+          <th>Road</th>
+          <th>Water</th>
+          <th>Barren</th>
+          <th>Forest</th>
+          <th>Agriculture</th>
+          <th>mIoU</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>UNet</td><td>43.46</td><td>60.59</td><td>52.35</td><td>69.22</td><td>46.60</td><td>24.23</td><td>41.88</td><td>48.95</td></tr>
+        <tr><td>Semantic FPN</td><td>60.70</td><td>50.92</td><td>51.36</td><td>73.93</td><td>52.05</td><td>56.24</td><td>76.94</td><td>57.98</td></tr>
+        <tr><td>FuseNet</td><td>47.19</td><td>50.77</td><td>61.36</td><td>68.21</td><td>31.71</td><td>47.71</td><td>57.45</td><td>52.62</td></tr>
+        <tr><td>HRNet</td><td>54.61</td><td>55.34</td><td>57.42</td><td>73.36</td><td>46.78</td><td>45.87</td><td>69.88</td><td>59.40</td></tr>
+        <tr class="best"><td>Ours (CNN+SegFormer)</td><td>60.68</td><td>63.25</td><td>62.08</td><td>76.47</td><td>47.93</td><td>47.82</td><td>72.75</td><td>66.30</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure>
+    <img src="images/fig2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="LoveDA masked samples"/>
+    <div class="figure-placeholder" style="display:none;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 12h20M12 2v20"/></svg>
+      <span>Figure 2 — place <code>images/fig2.png</code> here</span>
+    </div>
+    <figcaption><strong>Fig. 2.</strong> Masked samples from the LoveDA dataset used for semantic segmentation training and evaluation.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="images/fig3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Confusion matrices"/>
+    <div class="figure-placeholder" style="display:none;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>
+      <span>Figure 3 — place <code>images/fig3.png</code> here</span>
+    </div>
+    <figcaption><strong>Fig. 3.</strong> Normalized confusion matrices for the top-3 semantic segmentation models: Semantic-FPN, HRNet+ResNet50, and our Custom CNN+SegFormer.</figcaption>
+  </figure>
+
+  <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">Flood Validation — FloodNet</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Model</th><th>Training Accuracy</th><th>Test Accuracy</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>InceptionNetV3</td><td>0.990</td><td>0.844</td></tr>
+        <tr><td>ResNet50</td><td>0.974</td><td>0.937</td></tr>
+        <tr class="best"><td>Xception (Ours)</td><td>0.998</td><td>0.946</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure>
+    <img src="images/fig4.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Flooded vs Not Flooded"/>
+    <div class="figure-placeholder" style="display:none;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>
+      <span>Figure 4 — place <code>images/fig4.png</code> here</span>
+    </div>
+    <figcaption><strong>Fig. 4.</strong> Xception flood validation on live India imagery (Aug 2025). <strong>Left:</strong> Flooded region (Aug 28). <strong>Right:</strong> Same area before flooding (Aug 1).</figcaption>
+  </figure>
+
+  <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">Victim Detection — HIT-MOB (Night Vision vs RGB)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">Model</th>
+          <th colspan="2">Normal RGB</th>
+          <th colspan="2">Thermal</th>
+          <th colspan="2">Infrared</th>
+          <th colspan="2">Night Vision</th>
+        </tr>
+        <tr>
+          <th>mF1</th><th>MPR</th>
+          <th>mF1</th><th>MPR</th>
+          <th>mF1</th><th>MPR</th>
+          <th>mF1</th><th>MPR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>YOLOv8</td><td>0.841</td><td>0.136</td><td>0.846</td><td>0.136</td><td>0.850</td><td>0.133</td><td>0.857</td><td>0.131</td></tr>
+        <tr class="best"><td>VFNet (Ours)</td><td>0.858</td><td>0.117</td><td>0.863</td><td>0.114</td><td>0.860</td><td>0.115</td><td>0.865</td><td>0.111</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">System Performance (1000 km², Zoom 11)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Module</th><th>Input Size</th><th>Time</th><th>Memory</th><th>Accuracy</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Tile Generation</td><td>1024×1024</td><td>0.80s</td><td>17.5 MB</td><td>1.00</td></tr>
+        <tr><td>Flood Detection</td><td>1024×1024</td><td>0.05s</td><td>4.5 MB</td><td>0.66</td></tr>
+        <tr><td>Flood Validation</td><td>1024×1024</td><td>0.02s</td><td>1.5 MB</td><td>0.95</td></tr>
+        <tr><td>Victim Detection</td><td>512×512</td><td>0.04s</td><td>2.0 MB</td><td>0.86</td></tr>
+        <tr><td>GPS Localization</td><td>—</td><td>0.01s</td><td>0.1 MB</td><td>±3.2m</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="section-rule"/>
+
+<!-- DATASET -->
+<section id="dataset">
+  <h2>Dataset</h2>
+  <p>We introduce <strong>HIT-MOB</strong>, a harmonized dual-modality UAV dataset constructed by merging the HIT-UAV thermal dataset and the MOBDrone maritime dataset into a unified 9-class schema.</p>
+  <ul style="color:var(--ink2); font-size:0.9rem; padding-left:1.3rem; margin: 0.8rem 0 1.2rem; line-height:2;">
+    <li><strong>129,068 frames</strong> · 25,524 annotations · 9 unified classes</li>
+    <li>Split: 70% train / 10% val / 20% test</li>
+    <li>Modalities: Thermal (HIT-UAV) + RGB (MOBDrone)</li>
+    <li>Images resized to 512×512, normalized with ImageNet statistics</li>
+  </ul>
+  <a class="dataset-card" href="https://www.kaggle.com/dsv/12184019" target="_blank">
+    <div class="ds-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="ds-info">
+      <h3>HIT-MOB Dataset on Kaggle</h3>
+      <p>kaggle.com/dsv/12184019 · DOI: 10.34740/KAGGLE/DSV/12184019</p>
+    </div>
+  </a>
+</section>
+
+<hr class="section-rule"/>
+
+<!-- DEPLOY -->
+<section id="deploy">
+  <h2>Deploy This Page</h2>
+  <p>Follow these steps to publish your project page on GitHub Pages.</p>
+
+  <div class="deploy-steps">
+
+    <div class="deploy-step">
+      <div class="ds-num">01</div>
+      <div class="ds-content">
+        <h3>Create a GitHub Repository</h3>
+        <p>Create a new public repo. For a user page, name it <code>username.github.io</code>. For a project page, any name works.</p>
+        <div class="code"><span class="cm"># on GitHub.com → New Repository → public</span>
+<span class="kw">git</span> init my-project-page
+<span class="kw">cd</span> my-project-page</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="ds-num">02</div>
+      <div class="ds-content">
+        <h3>Add Your Files</h3>
+        <p>Place <code>index.html</code> at the root and put all paper figures inside an <code>images/</code> folder.</p>
+        <div class="code">my-project-page/
+├── index.html        <span class="cm"># this file</span>
+└── images/
+    ├── fig1.png      <span class="cm"># system workflow</span>
+    ├── fig2.png      <span class="cm"># LoveDA samples</span>
+    ├── fig3.png      <span class="cm"># confusion matrices</span>
+    ├── fig4.png      <span class="cm"># flood validation</span>
+    └── fig5.png      <span class="cm"># thermal transform</span></div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="ds-num">03</div>
+      <div class="ds-content">
+        <h3>Push to GitHub</h3>
+        <p>Commit all files and push to the <code>main</code> (or <code>gh-pages</code>) branch.</p>
+        <div class="code"><span class="kw">git</span> add .
+<span class="kw">git</span> commit -m <span class="st">"Add project page"</span>
+<span class="kw">git</span> remote add origin https://github.com/username/repo.git
+<span class="kw">git</span> push -u origin main</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="ds-num">04</div>
+      <div class="ds-content">
+        <h3>Enable GitHub Pages</h3>
+        <p>Go to your repo → <strong>Settings</strong> → <strong>Pages</strong>. Under <em>Source</em>, select branch <code>main</code>, folder <code>/ (root)</code>. Click <strong>Save</strong>.</p>
+        <div class="code"><span class="cm"># Your page will be live at:</span>
+https://username.github.io/repo-name/</div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="ds-num">05</div>
+      <div class="ds-content">
+        <h3>Update Links in index.html</h3>
+        <p>Replace the placeholder <code>#</code> hrefs with your actual paper PDF URL, arXiv link, and GitHub repo link.</p>
+        <div class="code"><span class="cm">&lt;!-- find and update these in &lt;header&gt; --&gt;</span>
+<span class="kw">href=</span><span class="st">"https://arxiv.org/abs/XXXX.XXXXX"</span>   <span class="cm"># Paper PDF</span>
+<span class="kw">href=</span><span class="st">"https://github.com/your/repo"</span>         <span class="cm"># GitHub</span></div>
+      </div>
+    </div>
+
+    <div class="deploy-step">
+      <div class="ds-num">06</div>
+      <div class="ds-content">
+        <h3>Custom Domain (Optional)</h3>
+        <p>Add a <code>CNAME</code> file with your domain to use a custom URL like <code>res-geoai.yourdomain.com</code>.</p>
+        <div class="code"><span class="cm"># Create file: CNAME</span>
+res-geoai.yourdomain.com
+
+<span class="cm"># Then add a CNAME DNS record pointing to:</span>
+username.github.io</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-rule"/>
+
+<!-- BIBTEX -->
+<section id="bibtex">
+  <h2>BibTeX</h2>
+  <p>If you find this work useful, please cite:</p>
+  <div class="bib-block">
+    <button class="copy-btn" onclick="copyBib(this)">Copy</button>
+    <pre id="bib-text">@article{pal2025resgeoai,
+  title     = {Res-GeoAI: A Satellite-to-Drone Dual-Modality System
+               for Flood Detection and Victim Localization
+               in Disaster Response},
+  author    = {Pal, Anidipta},
+  year      = {2025},
+  note      = {Heritage Institute of Technology, Kolkata},
+  email     = {anidipta.pal.aiml27@heritageit.edu.in}
+}</pre>
+  </div>
+</section>
+
+<hr class="section-rule"/>
+
+<footer>
+  <p>Res-GeoAI · Anidipta Pal · Heritage Institute of Technology, Kolkata ·
+    <a href="mailto:anidipta.pal.aiml27@heritageit.edu.in">Contact</a> ·
+    Dataset: <a href="https://www.kaggle.com/dsv/12184019" target="_blank">Kaggle HIT-MOB</a>
+  </p>
+</footer>
+
+<script>
+  function copyBib(btn) {
+    const text = document.getElementById('bib-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+</script>
+</body>
+</html>
