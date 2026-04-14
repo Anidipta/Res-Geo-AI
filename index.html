@@ -9,17 +9,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink: #111111;
-      --ink2: #444444;
-      --ink3: #777777;
-      --rule: #e0e0e0;
-      --accent: #1a56db;
-      --accent2: #0e3fa8;
+      --ink: #0f1724;
+      --ink2: #334155;
+      --ink3: #556276;
+      --rule: #dfe8f6;
+      --accent: #0b66d1;
+      --accent2: #054aa3;
       --teal: #0891b2;
       --bg: #ffffff;
-      --bg2: #f8f9fc;
-      --tag-bg: #eef2ff;
-      --tag-fg: #3730a3;
+      --bg2: #f3f8ff;
+      --tag-bg: #e6f0ff;
+      --tag-fg: #063b8a;
     }
 
     html { scroll-behavior: smooth; }
@@ -55,7 +55,7 @@
     /* ── HERO ── */
     header {
       max-width: 860px; margin: 0 auto;
-      padding: 5rem 2rem 3.5rem;
+      padding: 3rem 1.4rem 1.8rem;
       text-align: center;
     }
 
@@ -139,10 +139,10 @@
 
     /* ── FIGURE ── */
     figure {
-      margin: 2rem 0;
+      margin: 1rem 0;
       background: var(--bg2);
       border: 1px solid var(--rule);
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
     }
     figure img {
@@ -150,8 +150,8 @@
       /* placeholder gradient when no actual images */
     }
     figcaption {
-      padding: 0.75rem 1.2rem;
-      font-size: 0.82rem; color: var(--ink3);
+      padding: 0.5rem 0.9rem;
+      font-size: 0.78rem; color: var(--ink3);
       border-top: 1px solid var(--rule);
       text-align: center;
     }
@@ -159,10 +159,10 @@
 
     .figure-placeholder {
       width: 100%; aspect-ratio: 16/7;
-      background: linear-gradient(135deg, #e8ecf5 0%, #dde4f0 50%, #d0daee 100%);
+      background: linear-gradient(135deg, #eef6ff 0%, #e6f0ff 50%, #dfeafe 100%);
       display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 0.5rem;
-      color: #8899bb; font-size: 0.85rem;
+      flex-direction: column; gap: 0.4rem;
+      color: #6f8fbf; font-size: 0.82rem;
     }
     .figure-placeholder svg { opacity: 0.4; }
 
@@ -194,11 +194,12 @@
 
     /* ── RESULTS TABLES ── */
     .table-wrap {
-      overflow-x: auto; margin: 1.5rem 0;
+      overflow-x: visible; margin: 1rem auto;
+      max-width: 860px;
     }
     table {
       width: 100%; border-collapse: collapse;
-      font-size: 0.84rem;
+      font-size: 0.78rem; table-layout: fixed;
     }
     th {
       background: var(--bg2); color: var(--ink2);
@@ -212,9 +213,22 @@
       border-bottom: 1px solid var(--rule);
       color: var(--ink2);
     }
+      th, td {
+        padding: 0.45rem 0.6rem;
+        border-bottom: 1px solid var(--rule);
+        color: var(--ink2);
+        white-space: normal; overflow-wrap: break-word; word-break: normal;
+        vertical-align: middle;
+      }
+        th { font-size: 0.68rem; padding: 0.45rem 0.5rem; }
+
+      /* automatic table numbering */
+      html { counter-reset: table; }
+      table { counter-increment: table; }
+     
     tr:last-child td { border-bottom: none; }
-    tr.best td { background: #f0f5ff; font-weight: 600; color: var(--ink); }
-    tr:hover td { background: #fafbff; }
+    tr.best td { background: #e6f2ff; font-weight: 700; color: var(--ink); }
+    tr:hover td { background: #f6fbff; }
 
     /* ── STAT CARDS ── */
     .stats {
@@ -338,14 +352,12 @@
     <li><a href="#method">Method</a></li>
     <li><a href="#results">Results</a></li>
     <li><a href="#dataset">Dataset</a></li>
-    <li><a href="#deploy">Deploy</a></li>
     <li><a href="#bibtex">BibTeX</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <header>
-  <div class="venue-badge">📄 Research Paper · 2025</div>
   <h1>Res-GeoAI: A Satellite-to-Drone Dual-Modality System for Flood Detection and Victim Localization in Disaster Response</h1>
   <p class="subtitle">Geospatial AI · UAV · Semantic Segmentation · Thermal Imaging</p>
 
@@ -358,11 +370,7 @@
   </p>
 
   <div class="btn-row">
-    <a href="#" class="btn btn-primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Paper PDF
-    </a>
-    <a href="https://www.kaggle.com/dsv/12184019" target="_blank" class="btn btn-outline">
+    <a href="https://www.kaggle.com/dsv/12184019" target="_blank" class="btn btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="10"/><polyline points="12 8 12 12 14 14"/></svg>
       HIT-MOB Dataset
     </a>
@@ -429,15 +437,6 @@
     </div>
     <figcaption><strong>Fig. 1.</strong> End-to-end system workflow for flood victim detection and localization. Level 1 (top): satellite segmentation and flood coverage. Level 2 (bottom): UAV victim detection and GPS localization.</figcaption>
   </figure>
-
-  <figure>
-    <img src="images/fig5.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Thermal Transformation"/>
-    <div class="figure-placeholder" style="display:none;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-      <span>Figure 5 — place <code>images/fig5.png</code> here</span>
-    </div>
-    <figcaption><strong>Fig. 5.</strong> RGB → Night Vision → Thermal → Infrared transformation pipeline. Clouds are effectively removed during thermal conversion, significantly improving victim visibility.</figcaption>
-  </figure>
 </section>
 
 <hr class="section-rule"/>
@@ -491,22 +490,15 @@
     </table>
   </div>
 
-  <figure>
-    <img src="images/fig2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="LoveDA masked samples"/>
-    <div class="figure-placeholder" style="display:none;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 12h20M12 2v20"/></svg>
-      <span>Figure 2 — place <code>images/fig2.png</code> here</span>
-    </div>
-    <figcaption><strong>Fig. 2.</strong> Masked samples from the LoveDA dataset used for semantic segmentation training and evaluation.</figcaption>
-  </figure>
+  
 
   <figure>
-    <img src="images/fig3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Confusion matrices"/>
+    <img src="images/fig2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Confusion matrices"/>
     <div class="figure-placeholder" style="display:none;">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>
-      <span>Figure 3 — place <code>images/fig3.png</code> here</span>
+      <span>Figure 2 — place <code>images/fig2.png</code> here</span>
     </div>
-    <figcaption><strong>Fig. 3.</strong> Normalized confusion matrices for the top-3 semantic segmentation models: Semantic-FPN, HRNet+ResNet50, and our Custom CNN+SegFormer.</figcaption>
+    <figcaption><strong>Fig. 2.</strong> Normalized confusion matrices for the top-3 semantic segmentation models.</figcaption>
   </figure>
 
   <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">Flood Validation — FloodNet</h3>
@@ -523,14 +515,6 @@
     </table>
   </div>
 
-  <figure>
-    <img src="images/fig4.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Flooded vs Not Flooded"/>
-    <div class="figure-placeholder" style="display:none;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>
-      <span>Figure 4 — place <code>images/fig4.png</code> here</span>
-    </div>
-    <figcaption><strong>Fig. 4.</strong> Xception flood validation on live India imagery (Aug 2025). <strong>Left:</strong> Flooded region (Aug 28). <strong>Right:</strong> Same area before flooding (Aug 1).</figcaption>
-  </figure>
 
   <h3 style="font-size:1.05rem; font-weight:600; margin: 1.8rem 0 0.6rem;">Victim Detection — HIT-MOB (Night Vision vs RGB)</h3>
   <div class="table-wrap">
@@ -599,91 +583,6 @@
 
 <hr class="section-rule"/>
 
-<!-- DEPLOY -->
-<section id="deploy">
-  <h2>Deploy This Page</h2>
-  <p>Follow these steps to publish your project page on GitHub Pages.</p>
-
-  <div class="deploy-steps">
-
-    <div class="deploy-step">
-      <div class="ds-num">01</div>
-      <div class="ds-content">
-        <h3>Create a GitHub Repository</h3>
-        <p>Create a new public repo. For a user page, name it <code>username.github.io</code>. For a project page, any name works.</p>
-        <div class="code"><span class="cm"># on GitHub.com → New Repository → public</span>
-<span class="kw">git</span> init my-project-page
-<span class="kw">cd</span> my-project-page</div>
-      </div>
-    </div>
-
-    <div class="deploy-step">
-      <div class="ds-num">02</div>
-      <div class="ds-content">
-        <h3>Add Your Files</h3>
-        <p>Place <code>index.html</code> at the root and put all paper figures inside an <code>images/</code> folder.</p>
-        <div class="code">my-project-page/
-├── index.html        <span class="cm"># this file</span>
-└── images/
-    ├── fig1.png      <span class="cm"># system workflow</span>
-    ├── fig2.png      <span class="cm"># LoveDA samples</span>
-    ├── fig3.png      <span class="cm"># confusion matrices</span>
-    ├── fig4.png      <span class="cm"># flood validation</span>
-    └── fig5.png      <span class="cm"># thermal transform</span></div>
-      </div>
-    </div>
-
-    <div class="deploy-step">
-      <div class="ds-num">03</div>
-      <div class="ds-content">
-        <h3>Push to GitHub</h3>
-        <p>Commit all files and push to the <code>main</code> (or <code>gh-pages</code>) branch.</p>
-        <div class="code"><span class="kw">git</span> add .
-<span class="kw">git</span> commit -m <span class="st">"Add project page"</span>
-<span class="kw">git</span> remote add origin https://github.com/username/repo.git
-<span class="kw">git</span> push -u origin main</div>
-      </div>
-    </div>
-
-    <div class="deploy-step">
-      <div class="ds-num">04</div>
-      <div class="ds-content">
-        <h3>Enable GitHub Pages</h3>
-        <p>Go to your repo → <strong>Settings</strong> → <strong>Pages</strong>. Under <em>Source</em>, select branch <code>main</code>, folder <code>/ (root)</code>. Click <strong>Save</strong>.</p>
-        <div class="code"><span class="cm"># Your page will be live at:</span>
-https://username.github.io/repo-name/</div>
-      </div>
-    </div>
-
-    <div class="deploy-step">
-      <div class="ds-num">05</div>
-      <div class="ds-content">
-        <h3>Update Links in index.html</h3>
-        <p>Replace the placeholder <code>#</code> hrefs with your actual paper PDF URL, arXiv link, and GitHub repo link.</p>
-        <div class="code"><span class="cm">&lt;!-- find and update these in &lt;header&gt; --&gt;</span>
-<span class="kw">href=</span><span class="st">"https://arxiv.org/abs/XXXX.XXXXX"</span>   <span class="cm"># Paper PDF</span>
-<span class="kw">href=</span><span class="st">"https://github.com/your/repo"</span>         <span class="cm"># GitHub</span></div>
-      </div>
-    </div>
-
-    <div class="deploy-step">
-      <div class="ds-num">06</div>
-      <div class="ds-content">
-        <h3>Custom Domain (Optional)</h3>
-        <p>Add a <code>CNAME</code> file with your domain to use a custom URL like <code>res-geoai.yourdomain.com</code>.</p>
-        <div class="code"><span class="cm"># Create file: CNAME</span>
-res-geoai.yourdomain.com
-
-<span class="cm"># Then add a CNAME DNS record pointing to:</span>
-username.github.io</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<hr class="section-rule"/>
-
 <!-- BIBTEX -->
 <section id="bibtex">
   <h2>BibTeX</h2>
@@ -696,7 +595,7 @@ username.github.io</div>
                in Disaster Response},
   author    = {Pal, Anidipta},
   year      = {2025},
-  note      = {Heritage Institute of Technology, Kolkata},
+  note      = {Heritage Institute of Technology, Kolkata. Presented at CVIP 25.},
   email     = {anidipta.pal.aiml27@heritageit.edu.in}
 }</pre>
   </div>
