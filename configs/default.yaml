@@ -1,0 +1,42 @@
+# Default Res-GeoAI configuration file
+
+satellite:
+  model_name: segformer_b4
+  num_classes: 7
+  image_size: 1024
+  tile_grid_n: 5
+  flood_threshold: 0.5
+  coverage_threshold: 10.0
+  deploy_confidence: 0.7
+  weights_path: saved_models/segformer_flood.pth
+
+validation:
+  model_name: xception
+  weights_path: saved_models/xception_flood.h5
+  confidence_threshold: 0.7
+  input_size: 299
+
+uav:
+  altitude_min: 60.0
+  altitude_max: 130.0
+  spiral_radius_step: 5.0
+  angular_step: 0.1
+  detection_model: varifocalnet
+  backbone: res2net101_dcn
+  weights_path: saved_models/vfnet_res2net101.pth
+  image_size: 512
+  conf_threshold: 0.6
+  min_box_area: 50
+  gamma_min: 0.3
+  gamma_max: 0.7
+
+gps:
+  sigma_pixel: 2.1
+  sigma_altitude: 0.5
+  sigma_pose: 0.8
+  sigma_wind: 1.5
+  focal_length: 35.0
+
+output_dir: outputs/
+log_level: INFO
+device: cuda
