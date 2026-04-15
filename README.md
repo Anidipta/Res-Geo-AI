@@ -17,7 +17,7 @@ By combining these capabilities, Res-GeoAI enhances the speed and precision of h
 
 ## System Overview
 
-![Res-GeoAI System Workflow](images\fig1.png)
+![Res-GeoAI System Workflow](https://github.com/Anidipta/Res-Geo-AI/blob/main/images/fig1.png)
 
 **Figure 1.** End-to-end system workflow for flood victim detection and localization. Level 1 (top): satellite segmentation and flood coverage analysis across large geographic regions. Level 2 (bottom): UAV victim detection via thermal imaging and GPS localization for coordinated rescue operations.
 
