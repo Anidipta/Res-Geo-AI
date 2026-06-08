@@ -159,23 +159,6 @@ cd testing && python run_all_tests.py
 
 ---
 
-## Citation
-
-If you find this work useful in your research, please cite:
-
-```bibtex
-@article{pal2025resgeoai,
-  title     = {Res-GeoAI: A Satellite-to-Drone Dual-Modality System
-               for Flood Detection and Victim Localization
-               in Disaster Response},
-  author    = {Pal, Anidipta},
-  year      = {2025},
-  url       = {https://doi.org/10.13140/RG.2.2.32814.88642}
-}
-```
-
----
-
 ## Contact & Resources
 
 - **Author:** Anidipta Pal
